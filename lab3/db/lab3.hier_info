@@ -1,0 +1,20 @@
+|lab3
+s <= inst7.DB_MAX_OUTPUT_PORT_TYPE
+a => inst15.IN0
+a => inst.IN0
+a => inst17.IN0
+a => inst20.IN0
+a => inst22.IN0
+b => inst1.IN0
+b => inst13.IN1
+b => inst17.IN1
+b => inst20.IN1
+b => anotbc.IN1
+Cin => inst2.IN0
+Cin => inst12.IN1
+Cin => inst10.IN1
+Cin => inst21.IN1
+Cin => inst23.IN1
+Cout <= inst6.DB_MAX_OUTPUT_PORT_TYPE
+
+

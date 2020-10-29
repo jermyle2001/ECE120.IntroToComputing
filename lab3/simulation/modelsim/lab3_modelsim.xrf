@@ -1,0 +1,12 @@
+vendor_name = ModelSim
+source_file = 1, /home/jeremyl6/ece120/lab3/lab3.bdf
+source_file = 1, /home/jeremyl6/ece120/lab3/db/lab3.cbx.xml
+design_name = lab3
+instance = comp, \s~output\, s~output, lab3, 1
+instance = comp, \Cout~output\, Cout~output, lab3, 1
+instance = comp, \Cin~input\, Cin~input, lab3, 1
+instance = comp, \b~input\, b~input, lab3, 1
+instance = comp, \a~input\, a~input, lab3, 1
+instance = comp, \inst7~0\, inst7~0, lab3, 1
+instance = comp, \inst6~0\, inst6~0, lab3, 1
+instance = comp, \~QUARTUS_CREATED_GND~I\, ~QUARTUS_CREATED_GND~I, lab3, 1

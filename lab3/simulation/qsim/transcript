@@ -1,0 +1,38 @@
+# do lab3.do
+# Model Technology ModelSim ALTERA vlog 10.3d Compiler 2014.10 Oct  7 2014
+# Start time: 19:22:43 on Sep 17,2020
+# vlog -work work lab3.vo 
+# -- Compiling module lab3
+# 
+# Top level modules:
+# 	lab3
+# End time: 19:22:43 on Sep 17,2020, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim ALTERA vlog 10.3d Compiler 2014.10 Oct  7 2014
+# Start time: 19:22:43 on Sep 17,2020
+# vlog -work work Waveform.vwf.vt 
+# -- Compiling module lab3_vlg_sample_tst
+# -- Compiling module lab3_vlg_check_tst
+# -- Compiling module lab3_vlg_vec_tst
+# 
+# Top level modules:
+# 	lab3_vlg_vec_tst
+# End time: 19:22:43 on Sep 17,2020, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -c -do "lab3.do" 
+# Start time: 19:22:43 on Sep 17,2020
+# Loading work.lab3_vlg_vec_tst
+# Loading work.lab3
+# Loading work.lab3_vlg_sample_tst
+# Loading work.lab3_vlg_check_tst
+# ERROR! Vector Mismatch for output port Cout :: @time = 40000.000 ps
+#      Expected value = 0
+#      Real value = 1
+# ERROR! Vector Mismatch for output port s :: @time = 50000.000 ps
+#      Expected value = 0
+#      Real value = 1
+#           2 mismatched vectors : Simulation failed !
+# ** Note: $finish    : Waveform.vwf.vt(182)
+#    Time: 80 ns  Iteration: 0  Instance: /lab3_vlg_vec_tst/tb_out
+# End time: 19:22:43 on Sep 17,2020, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0

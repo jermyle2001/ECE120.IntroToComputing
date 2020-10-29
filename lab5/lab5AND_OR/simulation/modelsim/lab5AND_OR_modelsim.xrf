@@ -1,0 +1,13 @@
+vendor_name = ModelSim
+source_file = 1, /home/jeremyl6/ece120/lab5/lab5AND_OR/lab5AND_OR.bdf
+source_file = 1, /home/jeremyl6/ece120/lab5/lab5AND_OR/AND_OR.vwf
+source_file = 1, /home/jeremyl6/ece120/lab5/lab5AND_OR/db/lab5AND_OR.cbx.xml
+design_name = lab5AND_OR
+instance = comp, \P~output\, P~output, lab5AND_OR, 1
+instance = comp, \A~output\, A~output, lab5AND_OR, 1
+instance = comp, \S1~input\, S1~input, lab5AND_OR, 1
+instance = comp, \S0~input\, S0~input, lab5AND_OR, 1
+instance = comp, \S2~input\, S2~input, lab5AND_OR, 1
+instance = comp, \inst5~0\, inst5~0, lab5AND_OR, 1
+instance = comp, \inst4~0\, inst4~0, lab5AND_OR, 1
+instance = comp, \~QUARTUS_CREATED_GND~I\, ~QUARTUS_CREATED_GND~I, lab5AND_OR, 1
