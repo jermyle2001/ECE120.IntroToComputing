@@ -1,8 +1,32 @@
-; This is the file you will use for the lab assignment
-; Make sure to comment your code properly and don't exceed 
-; the line limitation for this assignment.  Good luck!
+; Name: Jeremy Lee        Date: 13 November 2020
+; Purpose of program: Sum only the positive numbers in an array of numbers
+; Execution: 1)Initialize registers for reading array addresses and down counter, R2 is down
+;            counter and R4 is current array address value. 
+;            2)Reads value in R4, uses it as address for reading value to be compared
+;            3)Loads value from address within R4 to R1, sets CC by adding 0, compares to check
+;            if negative.
+;            4)Skips addition line if negative, else adds R1 to R5 and stores in R5
+;            5)Adds 1 to R4 to increase address value, subtracts 1 from R2 to count down.
+;            6)Checks if R2 is positive, if not HALTs program, if true loops back to step 2.
+
+
 
 0011 0001 0000 0000 ; x3100 - starting address of the program
 
 ; The program description and code starts here
+0010 100 000001010 ; x3100, R4 <-- M[x310B] Initializes R4 with value x3132 from x310B
+0010 010 000001010 ; x3101, R2 <-- M[x310C] Initializes R2 with value x000A from x310C
+0010 101 000001010 ; x3102, R5 <-- M[x310D] Initializes R5 with values x0000 from x310D
+0110 001 100 000000 ; x3103, R1 <-- M[R4] Loads R1 with value from R4
+0001 001 001 1 00000 ; x3104, R1 <-- R1 + 0 Adds 0 to R1 in order to set CC, stores in R1
+0000 100 000000001 ; x3105, BRn Checks for negative value in R1, skip line/don't add if true
+0001 101 101 0 00 001 ; x3106, R5 <-- R5 + R1 Adds R5 and R1 together, stores in R5
+0001 100 100 1 00001 ; x3107, R4 <-- R4 + 1 Adds 1 to R4 to increment next memory address
+0001 010 010 1 11111 ; x3108, R2 <-- R2 - 1 Subtracts 1 from R2 to decrease counter
+0000 001 111111001 ; x3109, Brp Checks for positive value in R2 (counter), creates loop if counter 
+                   ; is positive. Else moves onto HALT command.
+1111 0000 00100101 ; x310A, TRAPs program and halts once all 10 numbers are scanned
+0011 0001 0011 0010 ; x310B, Stores initial value for R4, x3132
+0000 0000 0000 1010 ; x310C, Stores initial value for R2, Decimal 10 or x000A
+0000 0000 0000 0000 ; x310D, Stores initial value for R5, Decimal 0 or x0000 (contingency)
 
