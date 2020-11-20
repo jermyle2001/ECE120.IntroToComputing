@@ -1,9 +1,47 @@
 Question 1: Describe the errors that occur when trying to assemble lab11.asm. Identify the cause of each error.
 
+ When trying to assemble lab11.asm, there are 8 errors that occur. 
+
+ [L14]The first error cites that "illegal operands for missing opcode": this is caused by  
+ the call to memory location start missing the opcode the psuedo op .ORIG 
+
+ [L16]The second error cites that "instruction appears before .ORIG": this is caused by the 
+ previous error, which is the absence of the .ORIG pseudo op.
+
+ [L17]The third error cites that "constant outside of allowed range": this is cauesd by an 
+ improper PCOffset, which is corrected through the calculation of the correct offset or 
+ addition of another label. 
+
+ [L19]The fourth error cites that "illegal operands for ADD": this is caused by the addition 
+ of an extra comma within the line. 
+
+ [L30]The fifth error cites that "constant outside of allowed range": this is caused by an 
+ improper PCOffset, which is correct through the calculation of the correct offset or 
+ addition of another label.
+
+ [L32]The sixth error cites that "label OUTERLOOP has already appeared": this is caused by 
+ the switching of the z and p within the Br function, causing the operand to be invalid.
+
+ [L35]The seventh error cites that "constant outside of allowed range": this is caused by an 
+ improper PCOffset, which is corrected through the calculation of the correct offset or 
+ addition of another label.
+
+ [L43]The eight error cites that "no .END directive found": this is caused by the absence of 
+ the .END directive at the end of the program. 
 
 
 Question 2: For each label in the code, write down the corresponding memory location. 
 
-
+ [Note: new labels were added]
+ OUTERLOOP : x3005
+ INNERLOOP : x3006
+ INPUT     : x3015
+ CLR5      : x3016
+ INPUTR2   : x3017
+ RESULT    : x3018
 
 Question 3: Between using labels and explicit memory locations/offsets, which one makes the most sense, and why?
+
+ Using labels makes more sense because it decreases the error associated with errors in 
+ calculating PC Offset by hand, in addition to allowing the reader to understand the 
+ operation performed in the case of lack of or less detailed comments.
