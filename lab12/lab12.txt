@@ -1,0 +1,41 @@
+.ORIG x3000                 ;Sets operation area to x3000
+	    AND R5,R5,#0		;Clears R5, sets to 0 for intialization
+	    ADD R5,R5,#16       ;Initializes R5 to 16 for counter
+	    LDI R1,#29          ;Loads value of character into R1
+	    AND R2,R2,#0        ;Clears R2, sets to 0 for address loop
+	    ADD R2,R2,#16       ;Adds 16 to R2, used in looping to calculate font 
+                            ;address
+	    ADD R1,R1,#-1       ;Subtracts 1 from R1, used in looping to 
+                            ;calculate font address
+	    Brp #-3             ;Loops back to R2 addition, essentially performs 
+                            ;multiplication operation
+	    LEA R3,FONT_DATA    ;Loads address of FONT_DATA into R3
+	    ADD R4,R3,R2        ;Loads beginning of location data for character 
+                            ;into R4
+	    ADD R4,R4,#8        ;Adds 8 to R4 to set printing address start
+	    LDI R2,ZERO         ;Loads value of character for '0'
+	    LDI R3,ONE          ;Loads value of character for '1'
+	    AND R6,R6,#0        ;Clear R6, sets to 0 for initialization
+	    ADD R6,R6,#8        ;Initializes R6 to 8 for counter
+LDCHAR	LDR R1,R4,#0        ;Loads memory of address stored in R4 into R1
+CHECK1	BRn LOAD1           ;Jumps to load of '1' value into R0
+	    LDR R0,R2,#0        ;Loads R0 with value of '0' character for 
+                            ;printing
+	    BRnzp WRITE         ;Jumps to print statement
+LOAD1	LDR R0,R3,#0        ;Loads R0 with value of '1' character for printing
+WRITE   OUT                 ;Prints character of either '1' or '0'
+	    ADD R1,R1,R1        ;Shifts R1 to the left 1 bit
+	    ADD R6,R6,#-1       ;Subtracts 1 from R6/counter
+	    BRp CHECK1          ;Loops back to character printing check until R6 
+                            ;= 0, or 8 bits have been printed
+	    AND R0,R0,#0        ;Clears R0 to prepare for newline print
+	    ADD R0,R0,#10       ;Addss in ASCII value for newline
+	    OUT                 ;Prints a new line
+	    ADD R4,R4,#1        ;Adds one to R4 to increment address
+	    ADD R5,R5,#-1       ;Subtracts one from R5 to decrease counter
+	    BRp LDCHAR          ;Loops back to R1 LD instruction if counter 
+                            ;is not zero
+	    HALT                ;Halts program
+ZERO    .FILL x5000         ;Fills in value of x5000 at location for loading
+ONE     .FILL x5001         ;Fills in value of x5001 at location for loading
+CHAR    .FILL x5002         ;Fills in vlaue of x5002 at location for loading

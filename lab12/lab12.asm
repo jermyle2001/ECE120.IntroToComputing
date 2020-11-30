@@ -1,3 +1,84 @@
+;The purpose of this program is to print out an ASCII letter onto an 8x16 grid,
+;with its value and symbols for printing pre-determined at values x5000 to x5002.
+;In order to achieve this, the program first calculates the address of the value
+;of the character stored within the FONT_DATA. Using principles of multiplication
+;the program continuously adds upon itself +8 until the desired address is 
+;reached. Once the address is reached, the program uses its predetermined 
+;constraints, line lengths of 8 bits and 16 lines, to print out the character as 
+;desired, using counter registers to achieve this. The program uses two loops, 
+;one within the other: the outer loop separates each line, while the inner
+;loop prints the characters' bits. Using these two in tandem with the
+;predetermined constraints, the program reiterates until the outer loop's counter
+;goes to zero, and then terminates.
+; **TABLE OF REGISTERS**
+;R1: -Initially used as ASCII value of character, decreases until zero
+;    -Used also as the address for the string to be printed after fulfilling
+;     its original purpose.
+;    -Used also to hold the value for for checking/string of character for that
+;     line
+;R2: -Initially used to hold the value of the offset from FONT_DATA to determine
+;     the address of the character.
+;    -Used also to hold the value of the character intended to be printed in the
+;     bits indicated with '0'.
+;R3: -Initially used to hold the address of FONT_DATA
+;    -Used also to hold the value of the character intended to be printed in the
+;     bits indicated with '1'.
+;R4: -Initially used to hold the location data for the string to be printed
+;R5: -Used as the counter for the outerloop, or the termination condition. Outer
+;     loop repeats until R5 hits zero.
+;R6: -Used as the counter for the innerloop, or the string printing loop. Inner
+;     loop repeats until R6 hits zero, and resets until R5 hits zero.
+;R7: -Unused in program, but used by subroutines, so therefore was avoided.
+
+
+
+
+
+
+.ORIG x3000                 ;Sets operation area to x3000
+	    AND R5,R5,#0		;Clears R5, sets to 0 for intialization
+	    ADD R5,R5,#8        ;Adds 8 to R5 to set counter to 16 (1/2)
+        ADD R5,R5,#8        ;Adds 8 to R5 to set counter to 16 (2/2)
+	    LDI R1,CHAR         ;Loads value of character into R1
+	    AND R2,R2,#0        ;Clears R2, sets to 0 for address loop
+MULT    ADD R2,R2,#8        ;Adds 8 to R2 to set to 16 in next instruction
+        ADD R2,R2,#8        ;Adds 16 to R2, used in looping to calculate font 
+                            ;address
+	    ADD R1,R1,#-1       ;Subtracts 1 from R1, used in looping to 
+                            ;calculate font address
+	    Brp MULT            ;Loops back to R2 addition, essentially performs 
+                            ;multiplication operation
+	    LEA R3,FONT_DATA    ;Loads address of FONT_DATA into R3
+	    ADD R4,R3,R2        ;Loads beginning of location data for character 
+                            ;into R4
+	    LDI R2,ZERO         ;Loads value of character for '0'
+	    LDI R3,ONE          ;Loads value of character for '1'
+LOOP    AND R6,R6,#0        ;Clear R6, sets to 0 for initialization
+	    ADD R6,R6,#8        ;Initializes R6 to 8 for counter
+    	LDR R1,R4,#0        ;Loads memory of address stored in R4 into R1
+CHECK1  ADD R1,R1,#0        ;Sets CC for value check
+    	BRn LOAD1           ;Jumps to load of '1' value into R0
+        AND R0,R0,#0        ;Clears R0 for loading
+	    ADD R0,R2,#0        ;Loads R0 with value of '0' character for 
+                            ;printing
+	    BRnzp WRITE         ;Jumps to print statement
+LOAD1	ADD R0,R3,#0        ;Loads R0 with value of '1' character for printing
+WRITE   OUT                 ;Prints character of either '1' or '0'
+	    ADD R1,R1,R1        ;Shifts R1 to the left 1 bit
+	    ADD R6,R6,#-1       ;Subtracts 1 from R6/counter
+	    BRp CHECK1          ;Loops back to character printing check until R6 
+                            ;= 0, or 8 bits have been printed
+	    AND R0,R0,#0        ;Clears R0 to prepare for newline print
+	    ADD R0,R0,#10       ;Addss in ASCII value for newline
+	    OUT                 ;Prints a new line
+	    ADD R4,R4,#1        ;Adds one to R4 to increment address
+	    ADD R5,R5,#-1       ;Subtracts one from R5 to decrease counter
+	    BRp LOOP            ;Loops back to R1 LD instruction if counter 
+                            ;is not zero
+	    HALT                ;Halts program
+ZERO    .FILL x5000         ;Fills in value of x5000 at location for loading
+ONE     .FILL x5001         ;Fills in value of x5001 at location for loading
+CHAR    .FILL x5002         ;Fills in value of x5002 at location for loading
 ; The table below represents an 8x16 font.  For each 8-bit extended ASCII
 ; character, the table uses 16 memory locations, each of which contains
 ; 8 bits (the high 8 bits, for your convenience) marking pixels in the
@@ -4100,3 +4181,5 @@ FONT_DATA
 	.FILL	x0000
 	.FILL	x0000
 	.FILL	x0000
+
+.END

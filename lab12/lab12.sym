@@ -1,0 +1,14 @@
+// Symbol table
+// Scope level 0:
+//	Symbol Name       Page Address
+//	----------------  ------------
+//	MULT              3005
+//	LOOP              300D
+//	CHECK1            3010
+//	LOAD1             3015
+//	WRITE             3016
+//	ZERO              3021
+//	ONE               3022
+//	CHAR              3023
+//	FONT_DATA         3024
+
