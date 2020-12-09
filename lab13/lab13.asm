@@ -1,3 +1,96 @@
+;The purpose of the program is to print out a string of letters in an 8x16 grid for each letter, with specified
+;ASCII characters for each character's '1' value or '0' value. The approach taken to accomplish this mainly involves
+;three iterative constructs to print, using registers and memory locations in tandem to achieve this. Due to the
+;limits on registers in the file, the memory locations of each ASCII value is set to also hold the address of the 
+;ASCII character's value, treating it as an "operational address". The program iterates, through its inner loop
+;to print each "operational address", through its middle loop to print each character in a line, and through its
+;outer loop to print all 16 rows. 
+;
+;TABLE OF REGISTERS
+;R0: Used exclusively to for print loading with the OUT function
+;R1: Used to load the value stored within the "operational address", and used for print comparisons and bit shifting
+;R2: Used to load the ASCII value for null check, also used to hold the "operational address"
+;R3: Used to load the address of the initial ASCII values, later used to address bit shifting, in addition to being 
+;	 used to hold address of memory holding the "operational address"
+;R4: Used primarily for the innerloop counter, prints each character's row
+;R5: Used to count number of characters, also used for middleloop counter, utilized in printing the entire row
+;R6: Used to print each row, with 16 rows as the outerloop counter
+;R7: Unused, as it is used by subroutines
+
+.ORIG x3000
+		AND R1,R1,#0	 ;Initializes registers
+		AND R2,R2,#0	 ;Initializes registers
+		AND R3,R3,#0	 ;Initializes registers
+		AND R4,R4,#0	 ;Initializes registers
+		AND R5,R5,#0	 ;Initializes registers
+		AND R6,R6,#0	 ;Initializes registers
+		LD  R2,CHAR1     ;Loads value x5002 into R2 from label CHAR1
+NULLC	LDR R3,R2,#0     ;Loads memory of ASCII value in R2 for null check
+		Brz NULL0        ;Exits loop if value loaded is ASCII Null
+		ADD R5,R5,#1     ;Increments R5 by one for middle loop counter
+		ADD R2,R2,#1     ;Adds address stored in R2 by 1
+		Brnzp NULLC      ;Loops back to Null check
+NULL0	ST  R5,MID       ;Stores number of characters into location "MID"
+		ADD R5,R5,#0	 ;Checks for nullstring
+		Brz NULLS		 ;Jumps to Nullstringprinting if nullstring
+		LDI R1,CHAR1	 ;Loads value of character at x5002 (Indirect CHAR1) into R1
+		LD  R2,CHAR1	 ;Loads value x5002 into R2 from CHAR1
+LADDR	AND R3,R3,#0     ;Clears R3 for use
+		ADD R3,R3,#4	 ;Adds 4 to R3 for bit shifting counter
+SHIFT1	ADD R1,R1,R1     ;Shifts R1 by one bit
+		ADD R3,R3,#-1    ;Decreases R3 by one
+		Brp SHIFT1       ;Loops back to shift until R3 = 0
+		LEA R3,FONT_DATA ;Loads address of label FONT_DATA into R3 for addition
+		ADD R1,R1,R3     ;Adds location of value to starting address of FONT_DATA for reference
+		STR R1,R2,#0     ;Changes address of value to FONT_DATA Offset of value (i.e. x5002 is now the address of 
+						 ;its original value.
+		ADD R2,R2,#1	 ;Adds 1 to location stored in R2
+		LDR R1,R2,#0	 ;Loads value of ASCII char at location specified in R2
+		ADD R5,R5,#-1	 ;Decreases value of R5, the loop's counter, by 1
+		Brp LADDR		 ;Loops back to label LADDR, repeating load/store process until all value addresses have 
+						 ;been loaded, indicated by R5 = 0.
+		ADD R6,R6,#8	 ;Adds 8 to R6 for outerloop counter
+		ADD R6,R6,#8	 ;Adds 8 to R6 for outerloop counter
+OLOOP	LD  R5,MID       ;Loads middle loop counter into R5
+		LD  R3,CHAR1     ;Loads value x5002 into R3 for address referencing
+MLOOP	AND R4,R4,#0     ;Clears R4 for counter usage
+		ADD R4,R4,#8	 ;Adds 8 to R4 for inner loop counter usage
+		LDR R1,R3,#0	 ;Loads address of ASCII line into R1
+		LDR R1,R1,#0	 ;Loads value of ASCII line into R1 for comparison and shifting 
+ILOOP	ADD R1,R1,#0	 ;Sets CC to value in R1
+		Brn ONEL         ;Jumps to loading of character meant to be in place of '1's
+		LDI R0,ZERO		 ;Loads ASCII character meant to be in place of '0's into R0
+		Brnzp PRINT		 ;Jumps to print line/command
+ONEL	LDI R0,ONE		 ;Loads ASCII character meant to be in place of '1's into R0
+PRINT	OUT				 ;Prints ASCII character in R0
+		ADD R1,R1,R1	 ;Shifts R1 by one bit
+		ADD R4,R4,#-1	 ;Decreases R4 by 1 (decreases inner loop counter by 1)
+		Brp ILOOP		 ;Jumps to comparison for loading until R4 = 0
+		LDR R2,R3,#0	 ;Stores address of ASCII line into R0
+		ADD R2,R2,#1	 ;Increases address of ASCII line by 1 
+		STR R2,R3,#0	 ;Stores value of increased address of ASCII line into operational address
+		ADD R3,R3,#1	 ;Increases operational address by 1
+		ADD R5,R5,#-1	 ;Decreases middle loop counter by 1
+		Brp MLOOP		 ;Loops back until middle loop is finished
+		AND R0,R0,#0	 ;Clears R0 for newline feed
+		ADD R0,R0,#10	 ;Adds 10 to R0 for newline print
+		OUT				 ;Prints newline
+		ADD R6,R6,#-1	 ;Decreases outerloop counter by 1
+		Brp OLOOP		 ;Loops through OLOOP until R6 = 0 (Outerloop)
+STOP	HALT
+NULLS   AND R0,R0,#0	 ;Clears R0 for nullstring case
+		ADD R0,R0,#10	 ;Loads value of newstring into R0 for printing
+		AND R6,R6,#0	 ;Clears R6 for nullstring case
+		ADD R6,R6,#8	 ;Adds 8 to R6 for row printing
+		ADD R6,R6,#8	 ;Adds 8 to R6 to total to 16 for row printing
+NLOOP	Brz STOP		 ;Exits loop once all newlines printed in Nullstring case
+		OUT				 ;Prints newline
+		ADD R6,R6,#-1 	 ;Decreases R6 by 1 for loop counter
+		BRnzp NLOOP      ;Loops back to counter check
+ZERO    .FILL x5000
+ONE     .FILL x5001
+CHAR1	.FILL x5002     ;Loads starting address of character data
+MID     .FILL x0000
 ; The table below represents an 8x16 font.  For each 8-bit extended ASCII
 ; character, the table uses 16 memory locations, each of which contains
 ; 8 bits (the high 8 bits, for your convenience) marking pixels in the
@@ -4100,3 +4193,4 @@ FONT_DATA
 	.FILL	x0000
 	.FILL	x0000
 	.FILL	x0000
+		.END

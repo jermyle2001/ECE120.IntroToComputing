@@ -1,0 +1,66 @@
+.ORIG x3000
+		AND R1,R1,#0	 ;Initializes registers
+		AND R2,R2,#0	 ;Initializes registers
+		AND R3,R3,#0	 ;Initializes registers
+		AND R4,R4,#0	 ;Initializes registers
+		AND R5,R5,#0	 ;Initializes registers
+		AND R6,R6,#0	 ;Initializes registers
+		LD  R2,CHAR1     ;Loads value x5002 into R2 from label CHAR1
+NULLC	LDR R3,R2,#0     ;Loads memory of ASCII value in R2 for null check
+		Brz NULL0        ;Exits loop if value loaded is ASCII Null
+		ADD R5,R5,#1     ;Increments R5 by one for middle loop counter
+		ADD R2,R2,#1     ;Adds address stored in R2 by 1
+		Brnzp NULLC      ;Loops back to Null check
+NULL0	ST  R5,MID       ;Stores number of characters into location "MID"
+		LDI R1,CHAR1	 ;Loads value of character at x5002 (Indirect CHAR1) into R1
+		LD  R2,CHAR1	 ;Loads value x5002 into R2 from CHAR1
+LADDR	AND R3,R3,#0     ;Clears R3 for use
+		ADD R3,R3,#4	 ;Adds 4 to R3 for bit shifting counter
+SHIFT1	ADD R1,R1,R1     ;Shifts R1 by one bit
+		ADD R3,R3,#-1    ;Decreases R3 by one
+		Brp SHIFT1       ;Loops back to shift until R3 = 0
+		LEA R3,FONT_DATA ;Loads address of label FONT_DATA into R3 for addition
+		ADD R1,R1,R3     ;Adds location of value to starting address of FONT_DATA for reference
+		STR R1,R2,#0     ;Changes address of value to FONT_DATA Offset of value (i.e. x5002 is now the address of 
+						 ;its original value.
+		ADD R2,R2,#1	 ;Adds 1 to location stored in R2
+		LDR R1,R2,#0	 ;Loads value of ASCII char at location specified in R2
+		Brp LADDR		 ;Loops back to label LADDR, repeating load/store process until all value addresses have 
+						 ;been loaded, indicated by R5 = 0.
+		ADD R6,R6,#8	 ;Adds 8 to R6 for outerloop counter
+		ADD R6,R6,#8	 ;Adds 8 to R6 for outerloop counter
+OLOOP	LD  R5,MID       ;Loads middle loop counter into R5
+		LD  R3,CHAR1     ;Loads value x5002 into R3 for address referencing
+MLOOP	AND R4,R4,#0     ;Clears R4 for counter usage
+		ADD R4,R4,#8	 ;Adds 8 to R4 for inner loop counter usage
+						 ;**THE NEXT TWO LINES MAY NEED TWEAKING**
+		LDR R1,R3,#0	 ;Loads address of ASCII line into R1
+		LDR R1,R1,#0	 ;Loads value of ASCII line into R1 for comparison and shifting 
+						 ;**THE PREVIOUS TWO LINES MAY NEED TWEAKING**
+ILOOP	Brn ONEL         ;Jumps to loading of character meant to be in place of '1's
+		LDI R0,ZERO		 ;Loads ASCII character meant to be in place of '0's into R0
+		Brnzp PRINT		 ;Jumps to print line/command
+ONEL	LDI R0,ONE		 ;Loads ASCII character meant to be in place of '1's into R0
+PRINT	OUT				 ;Prints ASCII character in R0
+		ADD R1,R1,R1	 ;Shifts R1 by one bit
+		ADD R4,R4,#-1	 ;Decreases R4 by 1 (decreases inner loop counter by 1)
+		Brp ILOOP		 ;Jumps to comparison for loading until R4 = 0
+						 ;**THESE NEXT FEW LINES MAY NEED TWEAKING**
+		LDR R2,R3,#0	 ;Stores address of ASCII line into R0
+		ADD R2,R2,#1	 ;Increases address of ASCII line by 1 
+		STR R2,R3,#0	 ;Stores value of increased address of ASCII line into operational address
+		ADD R3,R3,#1	 ;Increases operational address by 1
+						 ;**THE PREVIOUS LINES MAY NEED TWEAKING**
+		ADD R5,R5,#-1	 ;Decreases middle loop counter by 1
+		Brp MLOOP		 ;Loops back until middle loop is finished
+		AND R0,R0,#0	 ;Clears R0 for newline feed
+		ADD R0,R0,#10	 ;Adds 10 to R0 for newline print
+		OUT				 ;Prints newline
+		ADD R6,R6,#-1	 ;Decreases outerloop counter by 1
+		Brp OLOOP		 ;Loops through OLOOP until R6 = 0 (Outerloop)
+		HALT
+ZERO    .FILL x5000
+ONE     .FILL x5001
+CHAR1	.FILL x5002     ;Loads starting address of character data
+MID     .FILL x0000
+		.END

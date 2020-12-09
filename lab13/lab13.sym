@@ -1,0 +1,22 @@
+// Symbol table
+// Scope level 0:
+//	Symbol Name       Page Address
+//	----------------  ------------
+//	NULLC             3007
+//	NULL0             300C
+//	LADDR             3011
+//	SHIFT1            3013
+//	OLOOP             301F
+//	MLOOP             3021
+//	ILOOP             3025
+//	ONEL              3029
+//	PRINT             302A
+//	STOP              3039
+//	NULLS             303A
+//	NLOOP             303F
+//	ZERO              3043
+//	ONE               3044
+//	CHAR1             3045
+//	MID               3046
+//	FONT_DATA         3047
+
